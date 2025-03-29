@@ -1,5 +1,3 @@
-# read app.py changes and update the documentation accordingly.  AI!
-
 # Real-Time Voice Chatbot with FastRTC
 
 This project demonstrates a real-time voice chatbot built using Python, FastAPI, and the FastRTC library. It captures user audio via WebRTC, transcribes it using Speech-to-Text (STT), sends the text to a Large Language Model (LLM) for a response, synthesizes the response using Text-to-Speech (TTS), and streams the audio back to the user through a web interface.
@@ -42,7 +40,7 @@ This project demonstrates a real-time voice chatbot built using Python, FastAPI,
 1.  **LLM Endpoint:**
     The application connects to an LLM specified in `app.py`:
     ```python
-    sambanova_client = OpenAI(
+    llm_client = OpenAI(
         api_key="ollama", base_url="http://aurora:11434/v1"
     )
     # ... uses model="llama3.2" later
