@@ -22,13 +22,10 @@ This project demonstrates a real-time voice chatbot built using Python, FastAPI,
 
 ## Installation
 
-Replace <your-repository-url> with https://github.com/lalanikarim/fastrtc-llm-chat-demo.git AI!
-
-
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
-    cd <repository-directory>
+    git clone https://github.com/lalanikarim/fastrtc-llm-chat-demo.git
+    cd fastrtc-llm-chat-demo
     ```
 
 2.  **Install Python dependencies:**
