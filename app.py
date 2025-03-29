@@ -6,14 +6,13 @@
 #     "openai",
 # ]
 # ///
-import os
-
 from fastrtc import (ReplyOnPause, Stream, get_stt_model, get_tts_model)
 from openai import OpenAI
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-sambanova_client = OpenAI(
+# Change base_url accordingly or use another LLM or Agent
+llm_client = OpenAI(
     api_key="ollama", base_url="http://aurora:11434/v1"
 )
 stt_model = get_stt_model()
@@ -22,8 +21,8 @@ tts_model = get_tts_model()
 
 def echo(audio):
     prompt = stt_model.stt(audio)
-    response = sambanova_client.chat.completions.create(
-        model="llama3.2",
+    response = llm_client.chat.completions.create(
+        model="llama3.2",  # Update based on your LLM / Agent
         messages=[{"role": "user", "content": prompt}],
         max_tokens=200,
     )
