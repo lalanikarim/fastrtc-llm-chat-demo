@@ -13,6 +13,7 @@ from fastrtc import (ReplyOnPause, Stream, AdditionalOutputs,
 from openai import OpenAI
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List
 import os
@@ -54,6 +55,8 @@ stream = Stream(ReplyOnPause(talk), modality="audio", mode="send-receive")
 
 app = FastAPI()
 stream.mount(app)
+
+app.mount("/static", StaticFiles(directory="static"))
 
 # Optional: Add routes
 
