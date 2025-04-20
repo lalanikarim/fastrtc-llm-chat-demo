@@ -31,22 +31,29 @@ This project demonstrates a real-time voice chatbot built using Python, FastAPI,
 2.  **Install Python dependencies:**
     You can use `pip` (or `uv` if you have it installed):
     ```bash
-    pip install fastapi openai "fastrtc[vad,tts,stt]" uvicorn
+    pip install fastapi openai "fastrtc[vad,tts,stt]" python-dotenv uvicorn
     ```
     *Note: The `run_server.sh` script uses `uv` to manage dependencies and run the server, which might handle installation automatically if `uv` is present.*
 
 ## Configuration
 
-1.  **LLM Endpoint:**
+1. **Environment Variables:**
+    ```.env
+    OPENAI_BASE_URL=http://localhost:11434/v1
+    OPENAI_API_KEY=ollama
+    OPENAI_MODEL=llama3.2
+
+    ```
+
+2. **LLM Endpoint:**
     The application connects to an LLM specified in `app.py`:
     ```python
     llm_client = OpenAI(
-        api_key="ollama", base_url="http://aurora:11434/v1"
+        api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL
     )
-    # ... uses model="llama3.2" later
     ```
     *   Ensure your LLM server (e.g., Ollama) is running.
-    *   Verify that the `base_url` (`http://aurora:11434/v1`) is correct for your setup. Replace `aurora` with `localhost` or the appropriate IP/hostname if needed.
+    *   Verify that the `base_url` (`http://localhost:11434/v1`) is correct for your setup. Replace `localhost` with the appropriate IP/hostname if needed.
     *   Make sure the model specified (`llama3.2`) is available on your LLM server (e.g., run `ollama pull llama3.2` if using Ollama).
     *   The `api_key="ollama"` is standard when using Ollama's OpenAI compatibility endpoint. Adjust if your endpoint requires a different key.
 

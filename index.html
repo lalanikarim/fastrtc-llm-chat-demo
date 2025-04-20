@@ -461,7 +461,7 @@
 
                 // create event stream to receive messages from /output
                 const eventSource = new EventSource('/outputs?webrtc_id=' + webrtc_id);
-                eventSource.addEventListener("output", (event) => {
+                eventSource.addEventListener("message", (event) => {
                     const eventJson = JSON.parse(event.data);
                     addMessage(eventJson.role, eventJson.content);
                 });
@@ -478,7 +478,7 @@
             messageDiv.classList.add('message', role);
             messageDiv.textContent = content;
             chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            window.scrollTo(0, document.body.scrollHeight);
             chatHistory.push({role, content});
         }
 
