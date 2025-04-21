@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatMessages = document.getElementById("chat-messages");
   const typingIndicator = document.getElementById("typing-indicator");
 
-  let client = FastRTCClient();
+  let client = FastRTCClient({
+    additional_inputs_url: "/input_hook",
+    additional_outputs_url: "/outputs",
+  });
   client.onConnecting(function () {
     startButton.innerHTML = `
                 <div class="icon-with-spinner">
