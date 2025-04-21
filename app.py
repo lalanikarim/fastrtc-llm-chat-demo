@@ -3,6 +3,8 @@
 # dependencies = [
 #     "fastapi",
 #     "fastrtc[stt,tts,vad]",
+#     "langchain==0.3.23",
+#     "langchain-ollama==0.3.2",
 #     "openai",
 #     "python-dotenv",
 #     "uvicorn",
@@ -10,7 +12,7 @@
 # ///
 from fastrtc import (ReplyOnPause, Stream, AdditionalOutputs,
                      get_stt_model, get_tts_model)
-from openai import OpenAI
+from langchain.chat_models import init_chat_model
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -22,33 +24,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL")
+BASE_URL = os.environ.get("BASE_URL")
+CHAT_MODEL = os.environ.get("CHAT_MODEL")
 
-llm_client = OpenAI(
-    api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL
-)
+llm_client = init_chat_model(CHAT_MODEL, base_url=BASE_URL)
 stt_model = get_stt_model()
 tts_model = get_tts_model()
 
 
 def talk(audio, chat_history):
     prompt = stt_model.stt(audio)
-    user_message = {"role": "user", "content": prompt}
-    chat_history.append(user_message)
-    response = llm_client.chat.completions.create(
-        model=OPENAI_MODEL,  # Update based on your LLM / Agent
-        messages=chat_history,
-        max_tokens=200,
-    )
-    yield AdditionalOutputs(json.dumps(user_message))
-    ai_reply = response.choices[0].message.content
-    ai_response = {"role": "ai", "content": ai_reply}
-    chat_history.append(ai_response)
-    yield AdditionalOutputs(json.dumps(ai_response))
-    for audio_chunk in tts_model.stream_tts_sync(ai_reply):
-        yield audio_chunk
+    if len(prompt.strip()) > 0:
+        user_message = {"role": "user", "content": prompt}
+        yield AdditionalOutputs(json.dumps(user_message))
+        chat_history.append(user_message)
+        response = llm_client.invoke(chat_history)
+        ai_reply = response.content
+        ai_response = {"role": "ai", "content": ai_reply}
+        chat_history.append(ai_response)
+        yield AdditionalOutputs(json.dumps(ai_response))
+        for audio_chunk in tts_model.stream_tts_sync(ai_reply):
+            yield audio_chunk
 
 
 stream = Stream(ReplyOnPause(talk), modality="audio", mode="send-receive")
@@ -89,3 +85,7 @@ async def stream_updates(webrtc_id: str):
         media_type="text/event-stream"
     )
 # uvicorn app:app --host 0.0.0.0 --port 8000
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app:app")

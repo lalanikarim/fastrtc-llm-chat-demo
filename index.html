@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RetroChat Audio</title>
-    <script src="/static/talk.js"></script>
+    <script src="/static/fastrtcclient.js"></script>
     <style>
         body {
             font-family: monospace;
@@ -278,7 +278,7 @@
         const chatMessages = document.getElementById('chat-messages');
         const typingIndicator = document.getElementById('typing-indicator');
 
-        let client = WebRTCClient()
+        let client = FastRTCClient()
         client.onConnecting(function(){
             startButton.innerHTML = `
                 <div class="icon-with-spinner">
@@ -341,7 +341,9 @@
 
             animationId_input = requestAnimationFrame(updateAudioLevel);
         }
+
         client.setUpdateAudioLevelCallback(updateAudioLevel)
+
         function addMessage(role, content) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', role);
@@ -373,6 +375,7 @@
                 bars[i].style.transform = `scaleY(${Math.max(0.1, barHeight)})`;
             }
         }
+
         client.setUpdateVisualizationCallback(updateVisualization)
 
         startButton.addEventListener('click', () => {

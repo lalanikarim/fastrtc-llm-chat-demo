@@ -1,10 +1,12 @@
-function WebRTCClient(
-  offer_url = "/webrtc/offer",
-  additional_inputs_url = "/input_hook",
-  additional_outputs_url = "/outputs",
-  enable_output_analyzer = true,
-  enable_input_analyzer = true,
-  debug = false,
+function FastRTCClient(
+  {
+    offer_url = "/webrtc/offer",
+    additional_inputs_url = "/input_hook",
+    additional_outputs_url = "/outputs",
+    rtc_config = {},
+    enable_output_analyzer = true,
+    debug = false,
+  } = {},
 ) {
   let pc;
   let webrtc_id;
@@ -97,7 +99,7 @@ function WebRTCClient(
     const __RTC_CONFIGURATION__ = {
       sdpSemantics: "unified-plan",
     };
-    const config = __RTC_CONFIGURATION__;
+    const config = { ...__RTC_CONFIGURATION__, ...rtc_config };
     pc = new RTCPeerConnection(config);
     const timeoutId = setTimeout(() => {
       showError(
@@ -287,6 +289,9 @@ function WebRTCClient(
     analyser_output.getByteFrequencyData(dataArray_output);
     return dataArray_output;
   }
+  function getWebRTCId() {
+    return webrtc_id;
+  }
 
   return {
     start,
@@ -305,5 +310,6 @@ function WebRTCClient(
     setUpdateAudioLevelCallback,
     setUpdateVisualizationCallback,
     getDataArrayOutput,
+    getWebRTCId,
   };
 }
